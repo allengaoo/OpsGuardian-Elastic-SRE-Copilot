@@ -9,6 +9,64 @@ Unlike generic chatbots that hallucinate numbers, OpsGuardian uses **ES|QL** for
 ![Demo Screenshot](assets/demo_screenshot.png)
 *(Place a screenshot of your Kibana Console conversation here)*
 
+## 🏗️ Architecture
+
+```mermaid
+graph TD
+    %% 定义样式
+    classDef user fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef client fill:#e1f5fe,stroke:#0277bd,stroke-width:2px;
+    classDef elastic fill:#fff3e0,stroke:#ef6c00,stroke-width:2px,stroke-dasharray: 5 5;
+    classDef agent fill:#000000,stroke:#333,stroke-width:2px,color:#fff;
+    classDef tool fill:#ffecb3,stroke:#ffca28,stroke-width:2px;
+    classDef data fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+
+    %% 节点定义
+    User((User / SRE)):::user
+    
+    subgraph Client_Layer [Client Layer]
+        Claude[Claude Desktop<br/>(MCP Client)]:::client
+        Kibana[Kibana Console<br/>(Dev Tools)]:::client
+    end
+
+    subgraph Elastic_Stack [Elastic Cloud Serverless]
+        direction TB
+        
+        Agent[🛡️ OpsGuardian Agent<br/>(Reasoning Engine)]:::agent
+        
+        subgraph The_Triad_of_Truth [The Triad of Truth Tools]
+            direction LR
+            T1[tool-calc-reliability<br/>(Math / ES|QL)]:::tool
+            T2[tool-find-patterns<br/>(History / ES|QL)]:::tool
+            T3[tool-search-sops<br/>(Knowledge / Vector)]:::tool
+        end
+
+        subgraph Data_Layer [Data Layer]
+            D1[(ops-server-logs<br/>Web Traffic)]:::data
+            D2[(sre-knowledge-base<br/>Runbooks)]:::data
+        end
+    end
+
+    %% 连接关系
+    User -->|"Investigate Incident"| Claude
+    User -->|"Test / Debug"| Kibana
+    
+    Claude <-->|"MCP Protocol"| Agent
+    Kibana <-->|"Agent API"| Agent
+
+    Agent --"1. Quantify Health"--> T1
+    Agent --"2. Correlate Logs"--> T2
+    Agent --"3. Find Fix"--> T3
+
+    T1 --"EVAL / STATS"--> D1
+    T2 --"match() / WHERE"--> D1
+    T3 --"text_expansion / ELSER"--> D2
+
+    D1 -.->|"Return Metrics"| T1
+    D1 -.->|"Return Logs"| T2
+    D2 -.->|"Return SOP"| T3
+```
+
 ## 🚀 The Problem
 SREs suffer from "Dashboard Fatigue". When an incident occurs, they have to:
 1.  Check Dashboards (Metrics)

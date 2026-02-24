@@ -1,0 +1,9 @@
+{
+  "id": "tool-calc-reliability",
+  "type": "esql",
+  "description": "Calculates the system's Error Rate percentage mathematically. Use this to determine if the system is HEALTHY, WARNING, or CRITICAL.",
+  "configuration": {
+    "query": "FROM kibana_sample_data_logs | EVAL is_error = CASE(response >= 500, 1, 0) | STATS total = COUNT(*), errors = SUM(is_error) | EVAL error_rate = ROUND(TO_DOUBLE(errors) / TO_DOUBLE(total) * 100.0, 2) | EVAL status = CASE(error_rate > 5.0, \"CRITICAL\", error_rate > 1.0, \"WARNING\", \"HEALTHY\")",
+    "params": {}
+  }
+}

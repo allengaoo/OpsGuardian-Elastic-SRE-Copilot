@@ -1,0 +1,11 @@
+{
+  "id": "tool-find-patterns",
+  "type": "esql",
+  "description": "Searches for historical logs that match a specific error message or pattern to see context.",
+  "configuration": {
+    "query": "FROM kibana_sample_data_logs | WHERE match(message, ?keyword) OR match(url, ?keyword) | STATS count = COUNT(*) BY url | SORT count DESC | LIMIT 3",
+    "params": {
+      "keyword": { "type": "string", "description": "The error keyword (e.g., '503', 'timeout')." }
+    }
+  }
+}

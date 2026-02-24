@@ -1,0 +1,7 @@
+POST sre-knowledge-base/_bulk
+{ "index" : { "_index" : "sre-knowledge-base" } }
+{ "title": "High Error Rate SOP", "content": "If Error Rate > 5%: 1. Check Load Balancer health. 2. Verify backend database connection pool. 3. Rollback recent deployments if any." }
+{ "index" : { "_index" : "sre-knowledge-base" } }
+{ "title": "503 Service Unavailable Fix", "content": "503 errors usually indicate upstream timeout. Check if the application server is overloaded (CPU > 90%). Scale up the instance group immediately." }
+{ "index" : { "_index" : "sre-knowledge-base" } }
+{ "title": "404 Broken Link Investigation", "content": "Spikes in 404s often occur after UI deployments. Check 'routes.yaml' for deprecated paths." }

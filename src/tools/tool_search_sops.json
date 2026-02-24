@@ -1,0 +1,14 @@
+{
+  "id": "tool-search-sops-semantic",
+  "type": "esql",
+  "description": "Searches the SRE Knowledge Base for solutions. Uses relevance matching to find the best SOP.",
+  "configuration": {
+    "query": "FROM sre-knowledge-base | WHERE match(content, ?issue_description) OR match(title, ?issue_description) | LIMIT 1",
+    "params": {
+      "issue_description": {
+        "type": "string",
+        "description": "Description of the issue."
+      }
+    }
+  }
+}
